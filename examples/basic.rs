@@ -24,7 +24,8 @@ async fn main() {
 
     loop {
         // Draw inside canvas
-        canvas.draw_inside_canvas(&|| {
+        canvas.set_camera();
+        {
             // Clear background
             clear_background(WHITE);
             // Draw something
@@ -43,7 +44,8 @@ async fn main() {
                 (HEIGHT as f32 - ferris.height()) / 2.,
                 WHITE,
             );
-        });
+        }
+        set_default_camera();
 
         clear_background(BLACK);
 
