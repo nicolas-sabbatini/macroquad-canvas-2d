@@ -1,6 +1,6 @@
 [package]
 name = "macroquad-canvas-2d"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["nicolas <nicolas.sabbatini.95@gmail.com>"]
 edition = "2021"
 license = "Apache-2.0"
@@ -8,6 +8,7 @@ description = "Add canvas functionality to macroquad."
 repository = "https://git.sr.ht/~nik_codes/macroquad-canvas"
 keywords = ["macroquad", "gamedev"]
 categories = ["game-development"]
+exclude = ["examples"]
 
 [dependencies]
 macroquad = "0.3"
@@ -22,4 +23,3 @@ path = "examples/basic.rs"
 [[example]]
 name = "coordinates"
 path = "examples/coordinates.rs"
-
