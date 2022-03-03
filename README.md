@@ -38,17 +38,8 @@ loop {
   set_default_camera();
   
   // Draw canvas on screen
-  draw_texture_ex(
-      *canvas.get_texture(),
-      left_padding,
-      top_padding,
-      WHITE,
-      DrawTextureParams {
-          dest_size: Some(dimensions),
-          ..Default::default()
-      },
-  );
-  
+  canvas.draw_to_screen();
+ 
   next_frame().await
 }
 

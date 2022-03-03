@@ -151,7 +151,7 @@ impl Canvas2D {
         (x, y)
     }
 
-    /// A warper around the parent_to_canvas for better ergonomic.
+    /// A wrapper around the parent_to_canvas for better ergonomic.
     /// Convert from the screen coordinates to canvas coordinates.
     ///
     /// Warning it can return negative numbers or values grater than the canvas
@@ -173,7 +173,7 @@ impl Canvas2D {
         )
     }
 
-    /// A warper around the canvas_to_parent for better ergonomic.
+    /// A wrapper around the canvas_to_parent for better ergonomic.
     /// Convert from the canvas coordinates to screen coordinates.
     ///
     /// Warning do to float division it can be a small margin of error.
@@ -192,5 +192,24 @@ impl Canvas2D {
             offset_x,
             offset_y,
         )
+    }
+
+    /// Draws the canvas to the middle of the screen, keeping the aspect ratio.
+    pub fn draw_to_screen(&self) {
+        // Get canvas dimensions and padding
+        let (left_padding, top_padding, dimensions) =
+            self.calculate_size_and_padding(screen_width(), screen_height());
+
+        // Draw canvas on screen
+        draw_texture_ex(
+            *self.get_texture(),
+            left_padding,
+            top_padding,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(dimensions),
+                ..Default::default()
+            },
+        );
     }
 }
