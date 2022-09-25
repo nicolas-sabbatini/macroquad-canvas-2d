@@ -1,11 +1,11 @@
 [package]
 name = "macroquad-canvas-2d"
-version = "0.2.2"
-authors = ["nicolas <nicolas.sabbatini.95@gmail.com>"]
+version = "0.2.3"
+authors = ["Nicolas <nik.code.things@gmail.com>"]
 edition = "2021"
 license = "Apache-2.0"
 description = "Add canvas functionality to macroquad."
-repository = "https://git.sr.ht/~nik_codes/macroquad-canvas"
+repository = "https://github.com/nicolas-sabbatini/macroquad-canvas-2d"
 keywords = ["macroquad", "gamedev"]
 categories = ["game-development"]
 exclude = ["examples"]
