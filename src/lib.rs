@@ -25,11 +25,10 @@ pub struct Canvas2D {
 impl Canvas2D {
     /// Create a new canvas with the given width and height.
     #[must_use]
+    #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
     pub fn new(width: f32, height: f32) -> Self {
-        #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
-        let canvas = render_target(width as u32, height as u32);
         let mut camera = Camera2D::from_display_rect(Rect::new(0.0, 0.0, width, height));
-        camera.render_target = Some(canvas);
+        camera.render_target = Some(render_target(width as u32, height as u32));
         // Temp fix or maybe I am doing something wrong
         // https://github.com/not-fl3/macroquad/issues/171#issuecomment-880601087
         camera.zoom.y = -camera.zoom.y;
@@ -139,8 +138,10 @@ impl Canvas2D {
     ) -> (f32, f32) {
         let scale_factor = self.calculate_min_scale_factor(parent_width, parent_height);
 
-        let x = (screen_x - offset_x) / scale_factor;
-        let y = (screen_y - offset_y) / scale_factor;
+        let camera_offset = self.camera.offset / self.camera.zoom;
+
+        let x = (screen_x - offset_x) / scale_factor - camera_offset.x;
+        let y = (screen_y - offset_y) / scale_factor - camera_offset.y;
         (x, y)
     }
 
@@ -158,9 +159,10 @@ impl Canvas2D {
         offset_y: f32,
     ) -> (f32, f32) {
         let scale_factor = self.calculate_min_scale_factor(parent_width, parent_height);
+        let camera_offset = self.camera.offset / self.camera.zoom;
 
-        let x = (canvas_x * scale_factor) + offset_x;
-        let y = (canvas_y * scale_factor) + offset_y;
+        let x = ((canvas_x + camera_offset.x) * scale_factor) + offset_x;
+        let y = ((canvas_y + camera_offset.y) * scale_factor) + offset_y;
         (x, y)
     }
 
@@ -210,6 +212,7 @@ impl Canvas2D {
     }
 
     /// Get the mouse position in canvas coordinates.
+    ///
     /// Warning it can return negative numbers or values grater than the canvas
     #[must_use]
     pub fn screen_mouse_position_to_canvas(&self, offset_x: f32, offset_y: f32) -> (f32, f32) {
@@ -236,5 +239,39 @@ impl Canvas2D {
                 ..Default::default()
             },
         );
+    }
+
+    /// Zoom the camera by a factor.
+    pub fn zoom_add(&mut self, zoom: f32) {
+        self.camera.zoom += zoom;
+    }
+
+    /// Zoom the camera to a factor.
+    pub fn zoom_to(&mut self, zoom: f32) {
+        self.camera.zoom = vec2(zoom, zoom);
+    }
+
+    /// Rotate the camera by a factor.
+    /// The factor is in degrees.
+    pub fn rotate_add(&mut self, rotation: f32) {
+        self.camera.rotation += rotation;
+    }
+
+    /// Rotate the camera to a factor.
+    /// The factor is in degrees.
+    pub fn rotate_to(&mut self, rotation: f32) {
+        self.camera.rotation = rotation;
+    }
+
+    /// Move the camera by a factor in pixels.
+    pub fn move_camera(&mut self, offset_x: f32, offset_y: f32) {
+        let offset = vec2(offset_x * self.camera.zoom.x, offset_y * self.camera.zoom.y);
+        self.camera.offset += offset;
+    }
+
+    /// Set the camera offset to a factor in pixels.
+    pub fn move_camera_to(&mut self, offset_x: f32, offset_y: f32) {
+        let offset = vec2(offset_x * self.camera.zoom.x, offset_y * self.camera.zoom.y);
+        self.camera.offset = offset;
     }
 }

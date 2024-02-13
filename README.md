@@ -52,8 +52,9 @@ For more information check out the examples!
 
 # TODO
 
-✅ Function to transform canvas coordinates to screen coordinates.
-
-✅ Mouse position, and transform.
-
-◻ Simple post processing effects.
+- ✅ Function to transform canvas coordinates to screen coordinates.
+- ✅ Mouse position, and transform.
+- ✅ Camera movement and rotation.
+  - ◻ Add camera constaint.
+  - ◻ Add camera effects like shake.
+- ◻ Simple post processing effects.
