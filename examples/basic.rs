@@ -1,5 +1,6 @@
+#![allow(clippy::cast_precision_loss)]
 use macroquad::prelude::*;
-use macroquad_canvas_2d::*;
+use macroquad_canvas_2d::Canvas2D;
 
 const WIDTH: i32 = 800;
 const HEIGHT: i32 = 600;
@@ -39,7 +40,7 @@ async fn main() {
             draw_rectangle(WIDTH as f32 - 60.0, HEIGHT as f32 - 60.0, 60.0, 60.0, BLUE);
             // Center
             draw_texture(
-                ferris,
+                &ferris,
                 (WIDTH as f32 - ferris.width()) / 2.,
                 (HEIGHT as f32 - ferris.height()) / 2.,
                 WHITE,
@@ -51,6 +52,6 @@ async fn main() {
 
         canvas.draw_to_screen();
 
-        next_frame().await
+        next_frame().await;
     }
 }

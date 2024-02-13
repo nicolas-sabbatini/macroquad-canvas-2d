@@ -1,5 +1,6 @@
+#![allow(clippy::cast_precision_loss)]
 use macroquad::prelude::*;
-use macroquad_canvas_2d::*;
+use macroquad_canvas_2d::Canvas2D;
 
 const WIDTH: i32 = 800;
 const HEIGHT: i32 = 600;
@@ -25,10 +26,18 @@ async fn main() {
 
         // Mouse position
         let (screen_mouse_x, screen_mouse_y) = mouse_position();
-        let (canvas_mouse_x, canvas_mouse_y) =
-            canvas.screen_to_canvas(screen_mouse_x, screen_mouse_y, left_padding, top_padding);
-        let (undo_mouse_x, undo_mouse_y) =
-            canvas.canvas_to_screen(canvas_mouse_x, canvas_mouse_y, left_padding, top_padding);
+        let (canvas_mouse_x, canvas_mouse_y) = canvas.screen_coordinates_to_canvas_coordinates(
+            screen_mouse_x,
+            screen_mouse_y,
+            left_padding,
+            top_padding,
+        );
+        let (undo_mouse_x, undo_mouse_y) = canvas.canvas_coordinates_to_screen_coordinates(
+            canvas_mouse_x,
+            canvas_mouse_y,
+            left_padding,
+            top_padding,
+        );
 
         // Draw inside canvas
         canvas.set_camera();
@@ -67,7 +76,7 @@ async fn main() {
 
         // Draw canvas on screen
         draw_texture_ex(
-            *canvas.get_texture(),
+            canvas.get_texture(),
             left_padding,
             top_padding,
             WHITE,
@@ -77,6 +86,6 @@ async fn main() {
             },
         );
 
-        next_frame().await
+        next_frame().await;
     }
 }

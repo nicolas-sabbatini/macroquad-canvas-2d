@@ -2,22 +2,25 @@
 
 Macroquad Canvas 2D is a simple resolution-handling library that allows you to focus on making your game with a fixed resolution.
 
-It is heavily inspired by [Push](https://github.com/Ulydev/push) 
+It is heavily inspired by [Push](https://github.com/Ulydev/push)
 
 ## How to use it
 
 Import the library.
-``` rust
+
+```rust
 use macroquad_canvas_2d::*;
 ```
 
 Create a new Canvas2D.
-``` rust
+
+```rust
 let canvas = Canvas2D::new(WIDTH as f32, HEIGHT as f32);
 ```
 
 Draw!
-``` rust
+
+```rust
 loop {
   // Push canvas
   canvas.set_camera();
@@ -36,10 +39,10 @@ loop {
   }
   // Pop canvas
   set_default_camera();
-  
+
   // Draw canvas on screen
   canvas.draw_to_screen();
- 
+
   next_frame().await
 }
 
@@ -48,8 +51,9 @@ loop {
 For more information check out the examples!
 
 # TODO
-◻ Function to transform canvas coordinates to screen coordinates. 
 
-◻ Simple post processing effects.  
+✅ Function to transform canvas coordinates to screen coordinates.
 
 ✅ Mouse position, and transform.
+
+◻ Simple post processing effects.

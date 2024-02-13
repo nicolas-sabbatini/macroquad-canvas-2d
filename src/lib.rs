@@ -1,5 +1,5 @@
 /*
-  Copyright 2021 Nicolas Cesar Sabbatini Vrech
+  Copyright 2024 Nicolas Cesar Sabbatini Vrech
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -17,15 +17,16 @@
 use macroquad::prelude::*;
 
 pub struct Canvas2D {
-    canvas: RenderTarget,
     camera: Camera2D,
     width: f32,
     height: f32,
 }
 
 impl Canvas2D {
-    /// Create a new canvas.
+    /// Create a new canvas with the given width and height.
+    #[must_use]
     pub fn new(width: f32, height: f32) -> Self {
+        #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
         let canvas = render_target(width as u32, height as u32);
         let mut camera = Camera2D::from_display_rect(Rect::new(0.0, 0.0, width, height));
         camera.render_target = Some(canvas);
@@ -33,7 +34,6 @@ impl Canvas2D {
         // https://github.com/not-fl3/macroquad/issues/171#issuecomment-880601087
         camera.zoom.y = -camera.zoom.y;
         Canvas2D {
-            canvas,
             camera,
             width,
             height,
@@ -41,39 +41,47 @@ impl Canvas2D {
     }
 
     /// Get width.
+    #[must_use]
     pub fn width(&self) -> f32 {
         self.width
     }
 
     /// Get height.
+    #[must_use]
     pub fn height(&self) -> f32 {
         self.height
     }
 
     /// Get width and height.
+    #[must_use]
     pub fn width_height(&self) -> (f32, f32) {
         (self.width, self.height)
     }
 
     /// Get a reference of the canvas texture.
+    #[must_use]
+    #[allow(clippy::missing_panics_doc)]
     pub fn get_texture(&self) -> &Texture2D {
-        &self.canvas.texture
+        &self.camera.render_target.as_ref().unwrap().texture
     }
 
     /// Get a mutable reference of the canvas texture.
+    #[must_use]
+    #[allow(clippy::missing_panics_doc)]
     pub fn get_texture_mut(&mut self) -> &mut Texture2D {
-        &mut self.canvas.texture
+        &mut self.camera.render_target.as_mut().unwrap().texture
     }
 
     /// Set the canvas as te default camera to draw
     /// if you want to draw to the screen you should call
-    /// macroquad::camera::set_default_camera()
+    /// `macroquad::camera::set_default_camera()`
     pub fn set_camera(&self) {
         set_camera(&self.camera);
     }
 
     /// Calculate size and padding of the canvas so it can fit inside
     /// of the target and its position is in the center.
+    #[must_use]
     pub fn calculate_size_and_padding(
         &self,
         target_width: f32,
@@ -90,6 +98,7 @@ impl Canvas2D {
 
     /// Calculate size of the canvas so it can fit inside of the target
     /// respecting the aspect ratio.
+    #[must_use]
     pub fn calculate_size(&self, target_width: f32, target_height: f32) -> Vec2 {
         let min_scale_factor: f32 = self.calculate_min_scale_factor(target_width, target_height);
 
@@ -101,6 +110,7 @@ impl Canvas2D {
     }
 
     /// Calculate the minimum scale factor.
+    #[must_use]
     pub fn calculate_min_scale_factor(&self, target_width: f32, target_height: f32) -> f32 {
         let (scale_factor_w, scale_factor_h) =
             self.calculate_scale_factor(target_width, target_height);
@@ -108,6 +118,7 @@ impl Canvas2D {
     }
 
     /// Calculate scale factor.
+    #[must_use]
     pub fn calculate_scale_factor(&self, target_width: f32, target_height: f32) -> (f32, f32) {
         (target_width / self.width, target_height / self.height)
     }
@@ -116,7 +127,8 @@ impl Canvas2D {
     ///
     /// Warning it can return negative numbers or values grater than the canvas
     /// when the mouse is outside of the canvas.
-    pub fn parent_to_canvas(
+    #[must_use]
+    pub fn parent_coordinates_to_canvas_coordinates(
         &self,
         parent_width: f32,
         parent_height: f32,
@@ -135,7 +147,8 @@ impl Canvas2D {
     /// Convert from the canvas coordinates to parent coordinates.
     ///
     /// Warning do to float division it can be a small margin of error.
-    pub fn canvas_to_parent(
+    #[must_use]
+    pub fn canvas_coordinates_to_parent_coordinates(
         &self,
         parent_width: f32,
         parent_height: f32,
@@ -151,19 +164,20 @@ impl Canvas2D {
         (x, y)
     }
 
-    /// A wrapper around the parent_to_canvas for better ergonomic.
+    /// A wrapper around the `parent_to_canvas` for better ergonomic.
     /// Convert from the screen coordinates to canvas coordinates.
     ///
     /// Warning it can return negative numbers or values grater than the canvas
     /// when the mouse is outside of the canvas.
-    pub fn screen_to_canvas(
+    #[must_use]
+    pub fn screen_coordinates_to_canvas_coordinates(
         &self,
         screen_x: f32,
         screen_y: f32,
         offset_x: f32,
         offset_y: f32,
     ) -> (f32, f32) {
-        self.parent_to_canvas(
+        self.parent_coordinates_to_canvas_coordinates(
             screen_width(),
             screen_height(),
             screen_x,
@@ -173,18 +187,19 @@ impl Canvas2D {
         )
     }
 
-    /// A wrapper around the canvas_to_parent for better ergonomic.
+    /// A wrapper around the `canvas_to_parent` for better ergonomic.
     /// Convert from the canvas coordinates to screen coordinates.
     ///
     /// Warning do to float division it can be a small margin of error.
-    pub fn canvas_to_screen(
+    #[must_use]
+    pub fn canvas_coordinates_to_screen_coordinates(
         &self,
         canvas_x: f32,
         canvas_y: f32,
         offset_x: f32,
         offset_y: f32,
     ) -> (f32, f32) {
-        self.canvas_to_parent(
+        self.canvas_coordinates_to_parent_coordinates(
             screen_width(),
             screen_height(),
             canvas_x,
@@ -194,15 +209,25 @@ impl Canvas2D {
         )
     }
 
+    /// Get the mouse position in canvas coordinates.
+    /// Warning it can return negative numbers or values grater than the canvas
+    #[must_use]
+    pub fn screen_mouse_position_to_canvas(&self, offset_x: f32, offset_y: f32) -> (f32, f32) {
+        let (x, y) = mouse_position();
+        self.screen_coordinates_to_canvas_coordinates(x, y, offset_x, offset_y)
+    }
+
     /// Draws the canvas to the middle of the screen, keeping the aspect ratio.
+    /// It calls `set_default_camera` before drawing.
     pub fn draw_to_screen(&self) {
+        set_default_camera();
         // Get canvas dimensions and padding
         let (left_padding, top_padding, dimensions) =
             self.calculate_size_and_padding(screen_width(), screen_height());
 
         // Draw canvas on screen
         draw_texture_ex(
-            *self.get_texture(),
+            self.get_texture(),
             left_padding,
             top_padding,
             WHITE,
