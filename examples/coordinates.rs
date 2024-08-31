@@ -27,10 +27,10 @@ async fn main() {
 
         // Move the camera with 'w' and 's'
         if is_key_down(KeyCode::W) {
-            canvas.move_camera(0.0, 50.0 * get_frame_time());
+            canvas.move_camera_by(0.0, 50.0 * get_frame_time());
         }
         if is_key_down(KeyCode::S) {
-            canvas.move_camera(0.0, -50.0 * get_frame_time());
+            canvas.move_camera_by(0.0, -50.0 * get_frame_time());
         }
 
         // Mouse position

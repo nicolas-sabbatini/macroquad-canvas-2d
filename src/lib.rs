@@ -72,7 +72,7 @@ impl Canvas2D {
     }
 
     /// Set the canvas as te default camera to draw
-    /// if you want to draw to the screen you should call
+    /// if you want to draw to the screen you should call.
     /// `macroquad::camera::set_default_camera()`
     pub fn set_camera(&self) {
         set_camera(&self.camera);
@@ -108,7 +108,8 @@ impl Canvas2D {
         Vec2::new(new_width, new_height)
     }
 
-    /// Calculate the minimum scale factor.
+    /// Calculate the minimum scale factor so the canvas can fit inside of the target
+    /// respecting the aspect ratio of the canvas.
     #[must_use]
     pub fn calculate_min_scale_factor(&self, target_width: f32, target_height: f32) -> f32 {
         let (scale_factor_w, scale_factor_h) =
@@ -116,7 +117,7 @@ impl Canvas2D {
         f32::min(scale_factor_w, scale_factor_h)
     }
 
-    /// Calculate scale factor.
+    /// Calculate scale factor so the canvas can fit inside of the target.
     #[must_use]
     pub fn calculate_scale_factor(&self, target_width: f32, target_height: f32) -> (f32, f32) {
         (target_width / self.width, target_height / self.height)
@@ -241,37 +242,40 @@ impl Canvas2D {
         );
     }
 
-    /// Zoom the camera by a factor.
-    pub fn zoom_add(&mut self, zoom: f32) {
+    /// Zoom in/out the camera.
+    pub fn zoom(&mut self, zoom: f32) {
         self.camera.zoom += zoom;
     }
 
-    /// Zoom the camera to a factor.
-    pub fn zoom_to(&mut self, zoom: f32) {
+    /// Set the camara Zoom.
+    pub fn set_zoom(&mut self, zoom: f32) {
         self.camera.zoom = vec2(zoom, zoom);
     }
 
     /// Rotate the camera by a factor.
-    /// The factor is in degrees.
-    pub fn rotate_add(&mut self, rotation: f32) {
-        self.camera.rotation += rotation;
+    /// The angle is in degrees.
+    pub fn rotate(&mut self, angle: f32) {
+        self.camera.rotation += angle;
     }
 
-    /// Rotate the camera to a factor.
-    /// The factor is in degrees.
-    pub fn rotate_to(&mut self, rotation: f32) {
-        self.camera.rotation = rotation;
+    /// Set the camara rotation.
+    /// The angle is in degrees.
+    pub fn set_rotation(&mut self, angle: f32) {
+        self.camera.rotation = angle;
     }
 
-    /// Move the camera by a factor in pixels.
-    pub fn move_camera(&mut self, offset_x: f32, offset_y: f32) {
-        let offset = vec2(offset_x * self.camera.zoom.x, offset_y * self.camera.zoom.y);
+    /// Move the camera by a amount in pixels.
+    pub fn move_camera_by(&mut self, x_amount: f32, y_amount: f32) {
+        let offset = vec2(x_amount * self.camera.zoom.x, y_amount * self.camera.zoom.y);
         self.camera.offset += offset;
     }
 
-    /// Set the camera offset to a factor in pixels.
-    pub fn move_camera_to(&mut self, offset_x: f32, offset_y: f32) {
-        let offset = vec2(offset_x * self.camera.zoom.x, offset_y * self.camera.zoom.y);
+    /// Move the camera to the given position.
+    pub fn move_camera_to(&mut self, x_position: f32, y_position: f32) {
+        let offset = vec2(
+            x_position * self.camera.zoom.x,
+            y_position * self.camera.zoom.y,
+        );
         self.camera.offset = offset;
     }
 }
